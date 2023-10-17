@@ -1,0 +1,119 @@
+import React, { useEffect, useState } from "react";
+import { login as userLogin } from "../../services/user/authorization.js";
+import { useNavigate } from "react-router-dom";
+import NavbarShared from "../../shared-components/Navbar.js";
+import Spinner from "../../shared-components/Spinner/Spinner.js";
+import { SnackbarProvider, enqueueSnackbar } from 'notistack';
+
+const Login = () => {
+  const navigate = new useNavigate()
+  
+const LoggedIn = ()=>{
+  if(localStorage.getItem("isAdmin")){
+    let check = localStorage.getItem("isAdmin")
+    if(Number(check)){
+      navigate('/allusers')
+    }else{
+      navigate('/allcontacts')
+    }
+  }
+}
+
+// useEffect(()=>{
+//   LoggedIn()
+// },[])
+  
+
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false)
+
+
+  const handleMyLogin = async (e) => {
+    try {
+      setIsLoading(prev=>true)
+      e.preventDefault();
+      if (username.length === 0) {
+        enqueueSnackbar('invalid username',{variant:"error"})
+        return;
+      }
+      if (password.length === 0) {
+        enqueueSnackbar('invalid password',{variant:"error"})
+        return
+
+      }
+      const response = await userLogin(username, password);
+      localStorage.setItem("auth", response.headers.auth);
+      localStorage.setItem("username", response.data.username);
+      localStorage.setItem("id", response.data.id);
+      if(response.data.isAdmin){
+        localStorage.setItem("isAdmin", 1);
+      }else{
+        localStorage.setItem("isAdmin", 0);
+      }
+      if(!response?.data.id){
+        enqueueSnackbar('invalid cred',{variant:"error"})
+        return
+      }
+      if(response.data.isAdmin){
+        navigate(`/allusers/`)
+        return
+      }
+      navigate(`/allcontacts/`)
+      return;
+      
+    } catch (error) {
+      console.log(error)
+      enqueueSnackbar(error.response.data.message, {variant:"error"})
+      return
+    }finally{
+      setIsLoading(prev=>false)
+    }
+  }
+
+  return (
+    <>
+    <Spinner isLoading={isLoading}/>
+    <SnackbarProvider autoHideDuration={3000}/>
+    <NavbarShared/>
+      <div className="card mx-auto mt-5" style={{ width: "20rem" }}>
+        <div className="card-body">
+          <h4 className="card-title mt-2">Login</h4>
+          <form>
+            <div className="form-group mt-2">
+              <label>Username</label>
+              <input
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                }}
+                type="text"
+                className="form-control"
+                placeholder="Username"
+              ></input>
+            </div>
+            <div className="form-group mt-2">
+              <label>Password</label>
+              <input
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
+                type="text"
+                className="form-control"
+                placeholder="Password"
+              ></input>
+            </div>
+            <button
+              type="button"
+              className="btn btn-primary mt-2"
+              onClick={handleMyLogin}
+            >
+              Submit
+            </button>
+          </form>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default Login;
