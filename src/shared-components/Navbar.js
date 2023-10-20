@@ -5,8 +5,8 @@ import { logout } from "../services/user/logout";
 import { useNavigate } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import { useState } from "react";
-import { SnackbarProvider, enqueueSnackbar } from 'notistack';
 import { resetPassword } from "../services/user/users";
+import { MessageError, MessageSuccess } from "../error/Errors";
 
 const NavbarShared = () => {
   const navigate = new useNavigate();
@@ -36,18 +36,18 @@ const NavbarShared = () => {
       console.log(sendObj);
       let response = await resetPassword(sendObj)
       if (response.data === "updated password") {
-        enqueueSnackbar(response.data, { variant: "success" });
+        MessageSuccess(response.data);
         handleClose();
       }
     } catch (error) {
       if(error.response){
         if(error.response.data?.message=="authentication failed"){
-          enqueueSnackbar("Incorrect Current Password", { variant: "error" });
+          MessageError("Incorrect Current Password");
           return
         }
-        enqueueSnackbar(error.response.data.message, { variant: "error" });
+        MessageError(error.response.data.message);
       }else{
-        enqueueSnackbar(error.message, { variant: "error" });
+        MessageError(error.message);
       }
     }
 
@@ -58,7 +58,7 @@ const NavbarShared = () => {
       e.preventDefault();
       handleShow();
     } catch (error) {
-      enqueueSnackbar(error.message, {variant:"error"})
+      MessageError(error.message)
     }
 
   };
@@ -71,7 +71,7 @@ const NavbarShared = () => {
       navigate(`/`);
     } catch (error) {
       console.log(error)
-      enqueueSnackbar(error.response.data.message, {variant:"error"})
+      MessageError(error.response.data.message)
     }
 
   };
@@ -87,7 +87,6 @@ const NavbarShared = () => {
 
   return (
     <>
-    <SnackbarProvider autoHideDuration={3000}/>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Reset Password</Modal.Title>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createContact } from "../../services/contacts/contacts";
-import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import Spinner from "../../shared-components/Spinner/Spinner.js";
+import { MessageError, MessageSuccess } from "../../error/Errors";
 
 const CreateContact = ({handelAllContacts})=>{
   const [isLoading, setIsLoading] = useState(false)
@@ -22,10 +22,10 @@ const CreateContact = ({handelAllContacts})=>{
         const response = await createContact(localStorage.getItem("id"),firstName,lastName)
         console.log(response)
         handelAllContacts()
-        enqueueSnackbar("contact Added",{variant:"success"})
+        MessageSuccess("contact Added")
         return  
       } catch (error) {
-        enqueueSnackbar(error.message,{variant:"error"})
+        MessageError(error.message)
       }finally{
         setIsLoading(prev=>false)
       }
@@ -37,13 +37,12 @@ const CreateContact = ({handelAllContacts})=>{
   return (
 <>
 <Spinner isLoading={isLoading}/>
-<SnackbarProvider/>
     <div className="card mx-auto mt-5 mb-5" style={{ width: "20rem" }}>
     <div className="card-body">
       <h4 className="card-title mt-2">Create Contact</h4>
       <form>
         <div className="form-group mt-2">
-          <label>First Name</label>
+          <label>First Name</label> 
           <input
             onChange={(e) => {
               setFirstName(e.target.value);

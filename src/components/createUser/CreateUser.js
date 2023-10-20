@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createUser } from "../../services/user/users";
-import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import Spinner from "../../shared-components/Spinner/Spinner.js";
+import { MessageError, MessageSuccess } from "../../error/Errors";
 
 
 const CreateUser = ({handelAllUsers})=>{
@@ -35,10 +35,10 @@ const CreateUser = ({handelAllUsers})=>{
         const response = await createUser(firstName,lastName,email,username,password)
         console.log(response.data)
         handelAllUsers()
-        enqueueSnackbar("user Added",{variant:"success"})
+        MessageSuccess("user Added")
         return
       } catch (error) {
-        enqueueSnackbar(error.message,{variant:"error"})
+        MessageError(error.message)
       }finally{
         setIsLoading(prev=>false)
       }
@@ -47,7 +47,6 @@ const CreateUser = ({handelAllUsers})=>{
   return (
 <>
 <Spinner isLoading={isLoading} />
-<SnackbarProvider/>
     <div className="card mx-auto mt-5 mb-5" style={{ width: "20rem" }}>
     <div className="card-body">
       <h4 className="card-title mt-2">Create User</h4>

@@ -7,9 +7,9 @@ import CreateUser from "../createUser/CreateUser";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Spinner from "../../shared-components/Spinner/Spinner.js";
-import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import SearchUserFilters from "../searchUserFilters/SearchUserFilters";
 import { useNavigate } from "react-router-dom";
+import { MessageError, MessageSuccess } from "../../error/Errors";
 
 const AllUsers = () => {
   const [count, setCount] = useState(1);
@@ -58,15 +58,15 @@ const AllUsers = () => {
       let bodyObj = { firstName, lastName, email };
       let response = await updateUser(id, bodyObj);
       if (response.data === "userUpdated") {
-        enqueueSnackbar(response.data, { variant: "success" });
+        MessageSuccess(response.data);
         handleClose();
         handelAllUsers();
       }
     } catch (error) {
       if(error.response){
-        enqueueSnackbar(error.response.data.message, { variant: "error" });
+        MessageError(error.response.data.message);
       }else{
-        enqueueSnackbar(error.message, { variant: "error" });
+        MessageError(error.message);
       }
     }
   };
@@ -75,11 +75,11 @@ const AllUsers = () => {
     try {
       let response = await deleteUser(d.id);
       if (response.data === "user Deleted") {
-        enqueueSnackbar(response.data, { variant: "success" });
+        MessageSuccess(response.data);
         handelAllUsers();
       }
     } catch (error) {
-      enqueueSnackbar(error.response.data.message, { variant: "error" });
+      MessageError(error.response.data.message);
     }
   };
 
@@ -104,7 +104,7 @@ const AllUsers = () => {
       setData((prev) => response.data);
       return;
     } catch (error) {
-      enqueueSnackbar(error.response.data.message, { variant: "error" });
+      MessageError(error.response.data.message, { variant: "error" });
     } finally {
       setIsLoading((prev) => false);
     }
@@ -116,7 +116,7 @@ const AllUsers = () => {
       setIsVerifiedUser((prev) => response.data.result);
       return;
     } catch (error) {
-      enqueueSnackbar(error.response.data.message, { variant: "error" });
+      MessageError(error.response.data.message);
     }
   };
 
@@ -138,7 +138,7 @@ const AllUsers = () => {
       setId(d.id);
       setShow((prev) => true);
     } catch (error) {
-      enqueueSnackbar("couldnt set values", { variant: "error" });
+      MessageError("couldnt set values");
     }
   };
 
@@ -152,7 +152,6 @@ const AllUsers = () => {
   return (
     <>
       <Spinner isLoading={isLoading} />
-      <SnackbarProvider />
       <NavbarShared />
       <CreateUser handelAllUsers={handelAllUsers} />
       <SearchUserFilters

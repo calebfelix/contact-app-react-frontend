@@ -3,7 +3,7 @@ import { login as userLogin } from "../../services/user/authorization.js";
 import { useNavigate } from "react-router-dom";
 import NavbarShared from "../../shared-components/Navbar.js";
 import Spinner from "../../shared-components/Spinner/Spinner.js";
-import { SnackbarProvider, enqueueSnackbar } from 'notistack';
+import { MessageError } from "../../error/Errors.js";
 
 const Login = () => {
   const navigate = new useNavigate()
@@ -34,11 +34,11 @@ const LoggedIn = ()=>{
       setIsLoading(prev=>true)
       e.preventDefault();
       if (username.length === 0) {
-        enqueueSnackbar('invalid username',{variant:"error"})
+        MessageError('invalid username')
         return;
       }
       if (password.length === 0) {
-        enqueueSnackbar('invalid password',{variant:"error"})
+        MessageError('invalid password')
         return
 
       }
@@ -52,7 +52,7 @@ const LoggedIn = ()=>{
         localStorage.setItem("isAdmin", 0);
       }
       if(!response?.data.id){
-        enqueueSnackbar('invalid cred',{variant:"error"})
+        MessageError('invalid credentials')
         return
       }
       if(response.data.isAdmin){
@@ -64,7 +64,7 @@ const LoggedIn = ()=>{
       
     } catch (error) {
       console.log(error)
-      enqueueSnackbar(error.response.data.message, {variant:"error"})
+      MessageError(error.response.data.message)
       return
     }finally{
       setIsLoading(prev=>false)
@@ -74,7 +74,6 @@ const LoggedIn = ()=>{
   return (
     <>
     <Spinner isLoading={isLoading}/>
-    <SnackbarProvider autoHideDuration={3000}/>
     <NavbarShared/>
       <div className="card mx-auto mt-5" style={{ width: "20rem" }}>
         <div className="card-body">

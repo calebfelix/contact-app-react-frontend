@@ -12,8 +12,8 @@ import Button from "react-bootstrap/Button";
 import CreateContact from "../createContact/CreateContact";
 import { useNavigate } from "react-router-dom";
 import Spinner from "../../shared-components/Spinner/Spinner.js";
-import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import SearchContactFilters from "../searchContactFilters/SearchContactFilters";
+import { MessageError, MessageSuccess } from "../../error/Errors";
 
 const AllContacts = () => {
   const navigate = useNavigate();
@@ -58,15 +58,15 @@ const AllContacts = () => {
       let bodyObj = { firstName, lastName };
       let response = await updateContact(userId, id, bodyObj);
       if (response.data === "Contact Updated") {
-        enqueueSnackbar(response.data, { variant: "success" });
+        MessageSuccess(response.data);
         handleClose();
         handelAllContacts();
       }
     } catch (error) {
       if(error.response){
-        enqueueSnackbar(error.response.data.message, { variant: "error" });
+        MessageError(error.response.data.message);
       }else{
-        enqueueSnackbar(error.message, { variant: "error" });
+        MessageError(error.message);
       }
     }
 
@@ -83,11 +83,11 @@ const AllContacts = () => {
     try {
       let response = await deleteContact(userId, d.id);
       if (response.data === "Contact Deleted") {
-        enqueueSnackbar(response.data, { variant: "success" });
+        MessageSuccess(response.data);
         handelAllContacts();
       }
     } catch (error) {
-      enqueueSnackbar(error.response.data.message, { variant: "error" });
+      MessageError(error.response.data.message);
     }
   };
 
@@ -95,7 +95,7 @@ const AllContacts = () => {
     try {
       navigate(`/allcontactdetails/${d.id}`);
     } catch (error) {
-      enqueueSnackbar("could not redirect", { variant: "error" });
+      MessageError("could not redirect");
     } finally {
     }
   };
@@ -116,7 +116,7 @@ const AllContacts = () => {
       setData((prev) => response.data);
       return;
     } catch (error) {
-      enqueueSnackbar(error.response.data.message, { variant: "error" });
+      MessageError(error.response.data.message);
     } finally {
       setIsLoading((prev) => false);
     }
@@ -128,7 +128,7 @@ const AllContacts = () => {
       setIsVerifiedUser((prev) => response.data.result);
       return;
     } catch (error) {
-      enqueueSnackbar(error.response.data.message, { variant: "error" });
+      MessageError(error.response.data.message);
     }
   };
 
@@ -153,7 +153,6 @@ const AllContacts = () => {
   return (
     <>
       <Spinner isLoading={isLoading} />
-      <SnackbarProvider />
       <NavbarShared />
       <CreateContact handelAllContacts={handelAllContacts} />
       <SearchContactFilters

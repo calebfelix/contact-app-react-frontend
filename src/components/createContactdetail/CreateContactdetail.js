@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createContactdetail } from "../../services/contactdetails/contactdetails";
-import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import Spinner from "../../shared-components/Spinner/Spinner.js";
+import { MessageError, MessageSuccess } from "../../error/Errors";
 
 const CreateContactdatail = ({handelAllContactdetails, contactId})=>{
   const [isLoading, setIsLoading] = useState(false)
@@ -23,11 +23,11 @@ try {
   const response = await createContactdetail(localStorage.getItem("id"),contactId,contactdetailType,contactdetailValue)
   console.log(response)
   handelAllContactdetails()
-  enqueueSnackbar("contact Detail Added",{variant:"success"})
+  MessageSuccess("contact Detail Added")
 
   return
 } catch (error) {
-  enqueueSnackbar(error.message,{variant:"error"})
+  MessageError(error.message)
 }finally{
   setIsLoading(prev=>false)
 }
@@ -38,7 +38,6 @@ try {
   return (
 <>
 <Spinner isLoading={isLoading}/>
-<SnackbarProvider/>
     <div className="card mx-auto mt-5 mb-5" style={{ width: "20rem" }}>
     <div className="card-body">
       <h4 className="card-title mt-2">Create Contact Detail</h4>

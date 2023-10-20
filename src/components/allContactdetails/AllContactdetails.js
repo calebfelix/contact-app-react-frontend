@@ -11,9 +11,9 @@ import { verify } from "../../services/user/authorization";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import CreateContactdatail from "../createContactdetail/CreateContactdetail";
-import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import Spinner from "../../shared-components/Spinner/Spinner.js";
 import SearchContactdetailFilters from "../searchContactdetailFilters/SearchContactdetailFilters";
+import { MessageError, MessageSuccess } from "../../error/Errors";
 
 const AllContactdetails = () => {
   let { contactId } = useParams();
@@ -57,15 +57,15 @@ const AllContactdetails = () => {
       let bodyObj = { contactdetailType, contactdetailValue };
       let response = await updateContactdetail(userId, contactId, id, bodyObj);
       if (response.data === "Contact detail Updated") {
-        enqueueSnackbar(response.data, { variant: "success" });
+        MessageSuccess(response.data);
         handleClose();
         handelAllContactdetails();
       }      
     } catch (error) {
       if(error.response){
-        enqueueSnackbar(error.response.data.message, { variant: "error" });
+        MessageError(error.response.data.message);
       }else{
-        enqueueSnackbar(error.message, { variant: "error" });
+        MessageError(error.message);
       }
     }
 
@@ -83,11 +83,11 @@ const AllContactdetails = () => {
 try {
   let response = await deleteContactdetail(userId, contactId, d.id);
   if (response.data === "Contact detail Deleted") {
-    enqueueSnackbar(response.data, { variant: "success" });
+    MessageSuccess(response.data);
     handelAllContactdetails();
   }  
 } catch (error) {
-  enqueueSnackbar(error.response.data.message, { variant: "error" });
+  MessageError(error.response.data.message);
 }
 
   };
@@ -109,7 +109,7 @@ try {
       setData((prev) => response.data);
       return;
     } catch (error) {
-      enqueueSnackbar(error.response.data.message, { variant: "error" });
+      MessageError(error.response.data.message);
     } finally {
       setIsLoading((prev) => false);
     }
@@ -121,7 +121,7 @@ try {
       setIsVerifiedUser((prev) => response.data.result);
       return;
     } catch (error) {
-      enqueueSnackbar(error.response.data.message, { variant: "error" });
+      MessageError(error.response.data.message);
     }
   };
 
@@ -146,7 +146,6 @@ try {
   return (
     <>
       <Spinner isLoading={isLoading} />
-      <SnackbarProvider />
       <NavbarShared />
       <CreateContactdatail
         handelAllContactdetails={handelAllContactdetails}
