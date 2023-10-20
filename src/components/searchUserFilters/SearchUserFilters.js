@@ -33,9 +33,33 @@ const SearchUserFilters = ({
       setReset((prev) => !prev);
     } catch (error) {}
   };
+  
+  const [disable, setDisable] = useState(false);
+  const disableHandle = () => {
+    try {
+      if (
+        searchFirstName !== "" ||
+        searchLastName !== "" ||
+        searchUsername !== "" ||
+        searchEmail !== ""
+      ) {
+        setDisable((prev) => false);
+        return;
+      }
+      setDisable((prev) => true);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    disableHandle();
+  }, [searchFirstName, searchLastName, searchUsername, searchEmail]);
+
   useEffect(() => {
     handleFilters();
   }, [reset]);
+
+
   return (
     <>
       <div className="card mb-4">
@@ -99,11 +123,17 @@ const SearchUserFilters = ({
                 }}
               >
                 <option value="true">True</option>
-                <option value="false" selected>False</option>
+                <option value="false" selected>
+                  False
+                </option>
               </select>
             </div>
             <div className="form-group mt-2">
-              <Button variant="primary" onClick={handleFilters}>
+              <Button
+                variant="primary"
+                disabled={disable}
+                onClick={handleFilters}
+              >
                 Search
               </Button>
             </div>

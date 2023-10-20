@@ -27,6 +27,26 @@ const SearchContactFilters = ({
   useEffect(() => {
     handleFilters();
   }, [reset]);
+
+  const [disable, setDisable] = useState(false);
+  const disableHandle = () => {
+    try {
+      if (
+        searchFirstName !== "" ||
+        searchLastName !== ""
+      ) {
+        setDisable((prev) => false);
+        return;
+      }
+      setDisable((prev) => true);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    disableHandle();
+  }, [searchFirstName, searchLastName]);
+
   return (
     <>
       <div className="card mb-4">
@@ -62,7 +82,7 @@ const SearchContactFilters = ({
             </div>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <div className="form-group m-2">
-                <Button variant="primary" onClick={handleFilters}>
+                <Button variant="primary" disabled={disable} onClick={handleFilters}>
                   Search
                 </Button>
               </div>

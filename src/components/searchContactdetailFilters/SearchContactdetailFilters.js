@@ -29,47 +29,27 @@ const SearchContactdetailFilters = ({
   useEffect(() => {
     handleFilters();
   }, [reset]);
+
+  const [disable, setDisable] = useState(false);
+  const disableHandle = () => {
+    try {
+      if (
+        searchContactdetailType !== "" ||
+        searchContactdetailValue !== ""
+      ) {
+        setDisable((prev) => false);
+        return;
+      }
+      setDisable((prev) => true);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    disableHandle();
+  }, [searchContactdetailType, searchContactdetailValue]);
+
   return (
-    // <>
-    //   <div className="m-5">
-    //     <label>
-    //       <b>Search By:</b>
-    //     </label>
-    //     <br />
-    //     <form
-    //       class="form-inline"
-    //       style={{ display: "flex", justifyContent: "space-between" }}
-    //     >
-    //       <label>Contactdetail Type</label>
-    //       <input
-    //         style={{ borderRadius: "5px" }}
-    //         type="text"
-    //         placeholder="Contactdetail Type"
-    //         value={searchContactdetailType}
-    //         onChange={(e) => {
-    //           setSearchContactdetailType((prev) => e.target.value);
-    //         }}
-    //       ></input>
-    //       <label>Contactdetail Value</label>
-    //       <input
-    //         style={{ borderRadius: "5px" }}
-    //         type="text"
-    //         placeholder="Contactdetail Value"
-    //         value={searchContactdetailValue}
-    //         onChange={(e) => {
-    //           setSearchContactdetailValue((prev) => e.target.value);
-    //         }}
-    //       ></input>
-          
-    //       <Button variant="primary" onClick={handleFilters}>
-    //         Search
-    //       </Button>
-    //       <Button variant="primary" onClick={resetFilters}>
-    //         reset filter
-    //       </Button>
-    //     </form>
-    //   </div>
-    // </>
     <>
     <div className="card mb-4">
       <div className="card-body">
@@ -104,7 +84,7 @@ const SearchContactdetailFilters = ({
           </div>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div className="form-group m-2">
-              <Button variant="primary" onClick={handleFilters}>
+              <Button variant="primary" disabled={disable} onClick={handleFilters}>
                 Search
               </Button>
             </div>
